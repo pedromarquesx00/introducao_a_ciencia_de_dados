@@ -90,12 +90,18 @@ df_mes1 = df_tratado.query("Data.dt.month == 1").groupby(df_tratado["Data"].dt.y
 
 # %%
 df_mes1.head()
-# %%
-plt.figure(figsize=(15,6))
-sns.boxplot(df_mes1,x="Data",y="QtdeChuva")
-plt.xticks(rotation=60)
-plt.title("Chuvas de Janeiro")
-plt.ylabel("Quantidade de chuvas")
-plt.show()
+# %% Grafico com plotly
+px.line(df_mes1,
+        y="QtdeChuva",
+        title="Chuvas de Janeiro",
+        labels={
+            "QtdeChuva":"Quatidade de chuva",
+            "index":"Anos"
+        })
+#sns.lineplot(df_mes1,x="Data",y="QtdeChuva",marker="o")
+#plt.xticks(rotation=60)
+#plt.title("Chuvas de Janeiro")
+#plt.ylabel("Quantidade de chuvas")
+#plt.show()
 
 # %%
