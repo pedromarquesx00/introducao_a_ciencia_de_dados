@@ -68,6 +68,7 @@ chuvas = ["Chuva01","Chuva02","Chuva03","Chuva04",
 # %%
 df_melt = df.melt(id_vars=["Data","NivelConsistencia"],
                   value_vars=chuvas,
+                  ar_name="Chuvas",
                   value_name="QtdeChuva")
 
 # %%
