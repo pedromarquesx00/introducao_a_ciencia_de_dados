@@ -45,17 +45,6 @@ df["Chuva30"] = df["Chuva30"].str.replace(",",".").astype(float)
 df["Chuva31"] = df["Chuva31"].str.replace(",",".").astype(float)
 
 # %%
-df.head()
-# %%
-df["Maxima"].describe()
-
-# %%
-df.head()
-# %%
-px.bar(df,x="Data",y="Maxima")
-# %%
-
-# %%
 chuvas = ["Chuva01","Chuva02","Chuva03","Chuva04",
           "Chuva05","Chuva06","Chuva07","Chuva08",
           "Chuva09","Chuva10","Chuva11","Chuva12",
@@ -64,7 +53,7 @@ chuvas = ["Chuva01","Chuva02","Chuva03","Chuva04",
           "Chuva21","Chuva22","Chuva23","Chuva24",
           "Chuva25","Chuva26","Chuva27","Chuva28",
           "Chuva29","Chuva30","Chuva31"]
-# %%
+
 # %%
 df_melt = df.melt(id_vars=["Data","NivelConsistencia"],
                   value_vars=chuvas,
@@ -72,37 +61,39 @@ df_melt = df.melt(id_vars=["Data","NivelConsistencia"],
                   value_name="QtdeChuva")
 
 # %%
-df_melt
-# %%
-df_tratado = df_melt[["Data","NivelConsistencia","QtdeChuva"]]
+dias = df_melt["Chuvas"].str[-2:].astype(int) - 1
+
+df_melt["Data_Efetiva"] = df_melt["Data"] + pd.to_timedelta(dias, unit='D')
+
+df_melt["Ano"] = df_melt["Data_Efetiva"].dt.year
+df_melt["Mes"] = df_melt["Data_Efetiva"].dt.month
 
 # %%
-df_tratado.head()
+df_anual = (df_melt.groupby("Ano")
+            .agg({"QtdeChuva":"sum"})
+            .reset_index())
 
 # %%
-df_mes = df_tratado.groupby(pd.Grouper(key="Data",freq="MS")).max()
-# %%
-px.line(df_mes,y="QtdeChuva")
+df_mensal = (df_melt.groupby(["Mes","Ano"])["QtdeChuva"]
+          .sum()
+          .reset_index())
 
 # %%
-df_mes1 = df_tratado.query("Data.dt.month == 1").groupby(df_tratado["Data"].dt.year).max()
+px.bar(df,x="Data",y="Total")
+# %%
+plt.figure(figsize=(12,8))
+plt.title("Boxplot dos dados de chuvas anuais")
+sns.boxplot(df_mensal,x="Ano",y="QtdeChuva")
+plt.tick_params(axis="x",labelrotation=45)
+plt.xlabel("Anos")
+plt.ylabel("Quantidade de Chuva (Em Milímetros)")
+
+#plt.savefig("boxplot_anual", dpi=300)
 
 # %%
+plt.title("Boxplot dos dados de chuvas mensais")
+sns.boxplot(df_mensal,x="Mes",y="QtdeChuva")
+plt.xlabel("Meses")
+plt.ylabel("Quantidade de Chuva (Em Milímetros)")
 
-# %%
-df_mes1.head()
-# %% Grafico com plotly
-px.line(df_mes1,
-        y="QtdeChuva",
-        title="Chuvas de Janeiro",
-        labels={
-            "QtdeChuva":"Quatidade de chuva",
-            "index":"Anos"
-        })
-#sns.lineplot(df_mes1,x="Data",y="QtdeChuva",marker="o")
-#plt.xticks(rotation=60)
-#plt.title("Chuvas de Janeiro")
-#plt.ylabel("Quantidade de chuvas")
-#plt.show()
-
-# %%
+#plt.savefig("boxplot_mensal", dpi=300)
