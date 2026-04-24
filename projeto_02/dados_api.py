@@ -38,7 +38,6 @@ def estacoesSubBaciaAPI(cod, tpEst):
 # %%
 df = estacoesSubBaciaAPI("51","1")
 df
-
 # %%
 fig = px.timeline(df,x_start="DataIns",x_end="DataAlt",y="RioNome")
 fig.update_yaxes(autorange="reversed")
