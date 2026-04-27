@@ -3,7 +3,6 @@ import requests
 import pandas as pd
 from io import StringIO
 import plotly.express as px
-
 # %% Função para puxar os dados da API
 def estacoesSubBaciaAPI(cod, tpEst):
     """
@@ -39,6 +38,16 @@ def estacoesSubBaciaAPI(cod, tpEst):
 df = estacoesSubBaciaAPI("51","1")
 df
 # %%
-fig = px.timeline(df,x_start="DataIns",x_end="DataAlt",y="RioNome")
+df["DataIns"], df["DataAlt"] = pd.to_datetime(df["DataIns"]), pd.to_datetime(df["DataAlt"])
+
+# %%
+df = df.sort_values(["id","DataIns"],ascending=False)
+
+# %%
+fig = px.timeline(df,x_start="DataIns",x_end="DataAlt",y="RioNome",
+                  hover_data={
+                     "DataIns": "|%d/%m/%y",
+                     "DataAlt": "|%d/%m/%y"
+                  })
 fig.update_yaxes(autorange="reversed")
 fig.show()
