@@ -44,7 +44,9 @@ df["DataIns"], df["DataAlt"] = pd.to_datetime(df["DataIns"]), pd.to_datetime(df[
 df = df.sort_values(["id","DataIns"],ascending=False)
 
 # %%
-fig = px.timeline(df,x_start="DataIns",x_end="DataAlt",y="RioNome",
+df["Operando"] = df['Operando'].astype(str)
+# %%
+fig = px.timeline(df,x_start="DataIns",x_end="DataAlt",y="RioNome",color="Operando",color_discrete_map={1:"blue",0:"red"},
                   hover_data={
                      "DataIns": "|%d/%m/%y",
                      "DataAlt": "|%d/%m/%y"
